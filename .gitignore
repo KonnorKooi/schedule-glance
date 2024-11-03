@@ -1,0 +1,8 @@
+# ai digest
+codebase.md
+.parcel-cache
+*.rc
+
+# build
+dist/*
+node_modules/

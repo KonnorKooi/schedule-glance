@@ -1,0 +1,163 @@
+/* Schedule container */
+.schedule {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Schedule table */
+.schedule-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 10px;
+  background-color: #f0f0f0;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+/* Table header */
+.schedule-table th {
+  padding: 15px;
+  text-align: center;
+  font-weight: bold;
+  background-color: #ffffff;
+  border-radius: 10px;
+}
+
+/* Time header */
+.time-header {
+  width: 40px;
+}
+
+/* Time column */
+.time-column {
+  width: 40px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 0;
+  vertical-align: top;
+}
+
+.time-slot {
+  height: 60px;
+  font-size: 0.85m;
+  color: #666;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 5px;
+  box-sizing: border-box;
+  border-top: 1px solid #ffffff00;
+}
+
+.time-slot:first-child {
+  border-top: none;
+}
+
+/* Day column */
+.day-column {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 0;
+  vertical-align: top;
+  position: relative;
+  height: 60px; 
+}
+
+.schedule-event {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  overflow: hidden;
+  font-size: 0.8em;
+}
+
+
+.schedule-event:hover {
+  transform: scale(1.02);
+}
+
+.event-content {
+  padding: 5px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.event-title {
+  font-weight: bold;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-subject {
+  font-size: 0.9em;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ... (rest of the styles remain unchanged) ... */
+
+/* Event popup */
+.event-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-width: 300px;
+  width: 100%;
+}
+
+.event-popup h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.event-popup p {
+  margin: 10px 0;
+  color: #666;
+}
+
+.event-popup button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.event-popup button:hover {
+  background-color: #0056b3;
+}
+
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .schedule-table {
+    border-spacing: 1px;
+  }
+
+
+  .time-slot {
+    height: 40px;
+    font-size: 0.7em;
+  }
+
+
+  .schedule-event {
+    font-size: 0.7em;
+  }
+}

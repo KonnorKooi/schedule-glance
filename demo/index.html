@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Weekly Schedule Demo</title>
+        <style>
+            .schedule-selector {
+                display: flex;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+
+            .schedule-selector button {
+                padding: 10px 20px;
+                margin: 0 10px;
+                font-size: 16px;
+                cursor: pointer;
+                background-color: #f0f0f0;
+                border: none;
+                border-radius: 5px;
+                transition: background-color 0.3s;
+            }
+
+            .schedule-selector button:hover {
+                background-color: #e0e0e0;
+            }
+
+            .schedule-selector button.active {
+                background-color: #007bff;
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script type="module" src="./index.js"></script>
+    </body>
+</html>
