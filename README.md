@@ -2,7 +2,7 @@
 
 A lightweight, customizable weekly schedule component for React applications. Schedule Glance provides an elegant way to display and manage weekly schedules with support for custom events, time slots, and interactive features.
 
-![Schedule Glance Demo](https://via.placeholder.com/800x400?text=Schedule+Glance+Demo)
+![Schedule Glance Demo](./image.png)
 
 ## Features
 

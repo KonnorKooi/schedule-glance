@@ -146,41 +146,100 @@ const Schedule: React.FC<ScheduleProps> = ({
         ))
     );
 
+    const borderSpacing = 10; // From CSS border-spacing
+    const totalSpacing = (headers.length + 1) * borderSpacing; // +1 for time column
+    const timeColumnWidth = 60; // From CSS .time-header width
+    const availableWidth = width - totalSpacing;
+    const dayColumnWidth = (availableWidth - timeColumnWidth) / headers.length;
+
+    useEffect(() => {
+        setEvents(initialEvents);
+        const { startHour: newStartHour, endHour: newEndHour } = findStartEndTimes(initialEvents);
+        setStartHour(newStartHour);
+        setEndHour(newEndHour);
+    }, [initialEvents]);
+    
     const contentHeight = height - 50;
     const hourHeight = contentHeight / (endHour - startHour);
 
     return (
-        <div className="schedule" ref={scheduleRef} style={{ width: `${width}px`, height: `${height}px` }}>
+        <div className="schedule" ref={scheduleRef} style={{ 
+            width: `${width}px`, 
+            height: `${height}px`,
+            margin: "0 auto"
+        }}>
             <div className="schedule-container" style={{ height: "100%" }}>
-                <table className="schedule-table" style={{ height: "100%" }}>
+                <table className="schedule-table" style={{ 
+                    height: "100%",
+                    width: "100%",
+                    tableLayout: "fixed",
+                    borderCollapse: "separate",
+                    borderSpacing: `${borderSpacing}px`,
+                    backgroundColor: "#f0f0f0",
+                    borderRadius: "20px",
+                    overflow: "hidden"
+                }}>
+                    <colgroup>
+                        <col style={{ width: `${timeColumnWidth}px` }} />
+                        {headers.map((_, index) => (
+                            <col key={index} style={{ width: `${dayColumnWidth}px` }} />
+                        ))}
+                    </colgroup>
                     <thead>
                         <tr style={{ height: "50px" }}>
-                            <th className="time-header">Time</th>
+                            <th className="time-header" style={{ 
+                                width: `${timeColumnWidth}px`,
+                                backgroundColor: "#ffffff",
+                                borderRadius: "10px",
+                                padding: "15px",
+                                textAlign: "center",
+                                fontWeight: "bold"
+                            }}>
+                                Time
+                            </th>
                             {headers.map((header, index) => (
-                                <th key={index}>{header.label}</th>
+                                <th key={index} style={{ 
+                                    width: `${dayColumnWidth}px`,
+                                    backgroundColor: "#ffffff",
+                                    borderRadius: "10px",
+                                    padding: "15px",
+                                    textAlign: "center",
+                                    fontWeight: "bold"
+                                }}>
+                                    {header.label}
+                                </th>
                             ))}
                         </tr>
                     </thead>
                     <tbody>
                         <tr style={{ height: `${contentHeight}px` }}>
-                            {/* Time column remains the same */}
-                            <td className="time-column">
+                            <td className="time-column" style={{ 
+                                width: `${timeColumnWidth}px`,
+                                backgroundColor: "#ffffff",
+                                borderRadius: "10px",
+                                padding: 0,
+                                verticalAlign: "top"
+                            }}>
                                 {timeSlots.map((time, index) => (
                                     <div 
                                         key={index} 
                                         className="time-slot" 
                                         style={{ 
                                             height: `${hourHeight}px`,
+                                            fontSize: "0.85em",
+                                            color: "#666",
                                             display: "flex",
-                                            alignItems: "center",
-                                            padding: "0 8px"
+                                            alignItems: "flex-start",
+                                            justifyContent: "center",
+                                            padding: "5px",
+                                            boxSizing: "border-box",
+                                            borderTop: index === 0 ? "none" : "1px solid #ffffff00"
                                         }}
                                     >
                                         {time}
                                     </div>
                                 ))}
                             </td>
-                            {/* Day columns with events */}
                             {headers.map((header) => {
                                 const dayEvents = groupedEvents.get(header.dayIndex) || [];
                                 return (
@@ -188,8 +247,13 @@ const Schedule: React.FC<ScheduleProps> = ({
                                         key={header.dayIndex} 
                                         className="day-column" 
                                         style={{ 
-                                            height: `${contentHeight}px`, 
-                                            position: "relative" 
+                                            width: `${dayColumnWidth}px`,
+                                            height: `${contentHeight}px`,
+                                            backgroundColor: "#ffffff",
+                                            borderRadius: "10px",
+                                            padding: 0,
+                                            verticalAlign: "top",
+                                            position: "relative"
                                         }}
                                     >
                                         {renderTimeLines()}
@@ -208,9 +272,11 @@ const Schedule: React.FC<ScheduleProps> = ({
                                                         left: "5px",
                                                         right: "5px",
                                                         zIndex: 2,
-                                                        borderRadius: "4px",
+                                                        borderRadius: "5px",
                                                         cursor: "pointer",
-                                                        overflow: "hidden"
+                                                        overflow: "hidden",
+                                                        transition: "transform 0.2s ease-in-out",
+                                                        fontSize: "0.8em"
                                                     }}
                                                     onClick={() => handleEventClick(event)}
                                                 >

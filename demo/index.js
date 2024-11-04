@@ -35,13 +35,6 @@ const schedules = [
                 `,
             },
             {
-                id: "3",
-                days: [3],
-                start: "16:00",
-                end: "17:30",
-                color: "#ff9999",
-            },
-            {
                 id: "6",
                 days: [1, 3],
                 start: "14:00",
