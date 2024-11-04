@@ -1,27 +1,26 @@
 {
   "name": "@konnorkooi/schedule-glance",
-  "version": "1.0.5",
+  "version": "1.0.0",
   "description": "A customizable weekly schedule component",
   "main": "dist/index.js",
-  "module": "dist/index.module.js",
   "types": "dist/index.d.ts",
   "style": "dist/index.css",
   "files": [
     "dist/index.js",
-    "dist/index.module.js",
     "dist/index.css",
     "dist/index.d.ts"
   ],
   "scripts": {
     "start": "parcel demo/index.html",
-    "build": "parcel build src/index.ts --no-source-maps --no-cache --public-url ./",
-    "prepare": "npm run build",
+    "build": "parcel build src/index.ts --no-source-maps --no-cache --dist-dir dist",
+    "clean": "rm -rf dist .parcel-cache",
+    "prepare": "npm run clean && npm run build",
     "prepublishOnly": "npm run build",
     "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/konnorkooi/schedule-glance.git"
+    "url": "git+https://github.com/konnorkooi/schedule-glace.git"
   },
   "keywords": [
     "schedule",
@@ -35,9 +34,9 @@
   "author": "Konnor Kooi <your.email@example.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/konnorkooi/schedule-glance/issues"
+    "url": "https://github.com/konnorkooi/schedule-glace/issues"
   },
-  "homepage": "https://github.com/konnorkooi/schedule-glance#readme",
+  "homepage": "https://github.com/konnorkooi/schedule-glace#readme",
   "peerDependencies": {
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0"
