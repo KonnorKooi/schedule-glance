@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ScheduleProps, ScheduleEvent } from "../types";
 import { sortEvents, findStartEndTimes } from "../utils/scheduleHelpers";
+import EventPopup from './EventPopup';  // Add this import
+
 
 const Schedule: React.FC<ScheduleProps> = ({
     events: initialEvents,
@@ -34,6 +36,7 @@ const Schedule: React.FC<ScheduleProps> = ({
             onEventClick(event);
         }
     };
+
 
     const renderEventContent = (event: ScheduleEvent) => {
         if (event.customContent) {
@@ -166,7 +169,8 @@ const Schedule: React.FC<ScheduleProps> = ({
         <div className="schedule" ref={scheduleRef} style={{ 
             width: `${width}px`, 
             height: `${height}px`,
-            margin: "0 auto"
+            margin: "0 auto",
+            position: "relative" // Add this to ensure proper stacking context
         }}>
             <div className="schedule-container" style={{ height: "100%" }}>
                 <table className="schedule-table" style={{ 
@@ -292,12 +296,11 @@ const Schedule: React.FC<ScheduleProps> = ({
                 </table>
             </div>
             {selectedEvent && (
-                <div className="event-popup">
-                    {renderEventContent(selectedEvent)}
-                    <button onClick={() => setSelectedEvent(null)}>Close</button>
-                </div>
-            )}
-        </div>
+                <EventPopup 
+                    event={selectedEvent} 
+                    onClose={() => setSelectedEvent(null)} 
+                />
+)}        </div>
     );
 };
 
