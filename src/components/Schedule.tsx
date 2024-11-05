@@ -168,11 +168,13 @@ const Schedule: React.FC<ScheduleProps> = ({
 
     return (
         <div className="schedule" ref={scheduleRef} style={{ 
-            width: '100%',
-            height: '100%',
-            position: 'absolute',
-            inset: 0,
-        }}>
+                    width: '100%',
+                    height: '100%',
+                    position: 'absolute',
+                    inset: 0,
+                    overflow: 'hidden', // Add this to prevent overflow
+                    borderRadius: "20px", // Match the container's border radius
+                }}>
             <table className="schedule-table" style={{ 
                 width: '100%',
                 height: '100%',
@@ -180,7 +182,8 @@ const Schedule: React.FC<ScheduleProps> = ({
                 borderSpacing: borderSpacing,
                 backgroundColor: "#f0f0f0",
                 borderRadius: "20px",
-                tableLayout: "fixed"
+                tableLayout: "fixed",
+                overflow: 'hidden' // Add this to prevent overflow
             }}>
                 <colgroup>
                     <col style={{ width: timeColumnWidth }} />
@@ -219,27 +222,40 @@ const Schedule: React.FC<ScheduleProps> = ({
                             borderRadius: "10px",
                             padding: 0,
                             verticalAlign: "top",
-                            width: timeColumnWidth
+                            width: timeColumnWidth,
+                            height: '100%', // Add this to ensure full height
+                            position: 'relative', // Add this for proper containment
+                            overflow: 'hidden' // Add this to prevent overflow
                         }}>
-                            {timeSlots.map((time, index) => (
-                                <div 
-                                    key={index} 
-                                    className="time-slot" 
-                                    style={{ 
-                                        height: `${100 / timeSlots.length}%`,
-                                        fontSize: "0.85em",
-                                        color: "#666",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        padding: "0.3125rem",
-                                        boxSizing: "border-box",
-                                        borderTop: index === 0 ? "none" : "1px solid #ffffff00"
-                                    }}
-                                >
-                                    {time}
-                                </div>
-                            ))}
+                            <div style={{ 
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}>
+                                {timeSlots.map((time, index) => (
+                                    <div 
+                                        key={index} 
+                                        className="time-slot" 
+                                        style={{ 
+                                            flex: 1,
+                                            fontSize: "0.85em",
+                                            color: "#666",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            padding: "0.3125rem",
+                                            boxSizing: "border-box",
+                                            borderTop: index === 0 ? "none" : "1px solid #ffffff00"
+                                        }}
+                                    >
+                                        {time}
+                                    </div>
+                                ))}
+                            </div>
                         </td>
                         {headers.map((header) => {
                             const dayEvents = groupedEvents.get(header.dayIndex) || [];
@@ -253,37 +269,46 @@ const Schedule: React.FC<ScheduleProps> = ({
                                         padding: 0,
                                         verticalAlign: "top",
                                         position: "relative",
-                                        height: "100%"
+                                        height: '100%',
+                                        overflow: 'hidden' // Add this to prevent overflow
                                     }}
                                 >
-                                    {renderTimeLines()}
-                                    {dayEvents.map((event) => {
-                                        const { top, height } = calculateEventPosition(event);
-                                        return (
-                                            <div
-                                                key={event.id}
-                                                className="schedule-event"
-                                                style={{
-                                                    backgroundColor: event.color || '#e0e0e0',
-                                                    top: `${top}%`,
-                                                    height: `${height}%`,
-                                                    minHeight: "1.25rem",
-                                                    position: "absolute",
-                                                    left: "0.3125rem",
-                                                    right: "0.3125rem",
-                                                    zIndex: 2,
-                                                    borderRadius: "5px",
-                                                    cursor: "pointer",
-                                                    overflow: "hidden",
-                                                    transition: "transform 0.2s ease-in-out",
-                                                    fontSize: "0.8em"
-                                                }}
-                                                onClick={() => handleEventClick(event)}
-                                            >
-                                                {renderEventContent(event)}
-                                            </div>
-                                        );
-                                    })}
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                    }}>
+                                        {renderTimeLines()}
+                                        {dayEvents.map((event) => {
+                                            const { top, height } = calculateEventPosition(event);
+                                            return (
+                                                <div
+                                                    key={event.id}
+                                                    className="schedule-event"
+                                                    style={{
+                                                        backgroundColor: event.color || '#e0e0e0',
+                                                        top: `${top}%`,
+                                                        height: `${height}%`,
+                                                        minHeight: "1.25rem",
+                                                        position: "absolute",
+                                                        left: "0.3125rem",
+                                                        right: "0.3125rem",
+                                                        zIndex: 2,
+                                                        borderRadius: "5px",
+                                                        cursor: "pointer",
+                                                        overflow: "hidden",
+                                                        transition: "transform 0.2s ease-in-out",
+                                                        fontSize: "0.8em"
+                                                    }}
+                                                    onClick={() => handleEventClick(event)}
+                                                >
+                                                    {renderEventContent(event)}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
                                 </td>
                             );
                         })}
