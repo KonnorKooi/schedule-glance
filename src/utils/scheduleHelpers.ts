@@ -44,8 +44,10 @@ export const findStartEndTimes = (events: ScheduleEvent[]): { startHour: number,
   // Round down to the nearest hour for start time
   const startHour = Math.floor(earliestStart / 60);
   
-  // Round up to the nearest hour for end time, and add 1 hour for buffer
-  const endHour = Math.min(24, Math.ceil(latestEnd / 60) + 1);
+  // Round to the exact hour for end time (no extra buffer hour)
+  // If the end time is exactly on the hour (e.g., 14:00), use that hour
+  // If it's not (e.g., 14:30), round up to the next hour
+  const endHour = Math.min(24, Math.ceil(latestEnd / 60));
 
   return { startHour, endHour };
 };

@@ -1,8 +1,8 @@
+// components/Schedule.tsx
 import React, { useState, useEffect, useRef } from "react";
 import { ScheduleProps, ScheduleEvent } from "../types";
 import { sortEvents, findStartEndTimes } from "../utils/scheduleHelpers";
-import EventPopup from './EventPopup';  // Add this import
-
+import EventPopup from './EventPopup';
 
 const Schedule: React.FC<ScheduleProps> = ({
     events: initialEvents,
@@ -16,6 +16,8 @@ const Schedule: React.FC<ScheduleProps> = ({
         { label: "Thursday", dayIndex: 3 },
         { label: "Friday", dayIndex: 4 },
     ],
+    customPopupHandler,
+    useDefaultPopup = true,
 }) => {
     const [events, setEvents] = useState<ScheduleEvent[]>(initialEvents);
     const [selectedEvent, setSelectedEvent] = useState<ScheduleEvent | null>(null);
@@ -31,30 +33,43 @@ const Schedule: React.FC<ScheduleProps> = ({
     }, [initialEvents]);
 
     const handleEventClick = (event: ScheduleEvent) => {
-        setSelectedEvent(event);
+        if (customPopupHandler) {
+            customPopupHandler(event);
+        } else if (useDefaultPopup) {
+            setSelectedEvent(event);
+        }
+        
         if (onEventClick) {
             onEventClick(event);
         }
     };
 
+    const formatHour = (hour: number): string => {
+        const period = hour >= 12 ? 'PM' : 'AM';
+        const displayHour = hour % 12 || 12; // Convert 0 to 12 for 12 AM
+        return `${displayHour}:00 ${period}`;
+    };
 
+    // Rest of the existing renderEventContent function
     const renderEventContent = (event: ScheduleEvent) => {
         if (event.customContent) {
             return <div dangerouslySetInnerHTML={{ __html: event.customContent }} />;
         }
 
-        // Default template when title/body are provided
         if (event.title || event.body) {
             return (
-                <div className="event-content" style={{ padding: "5px" }}>
+                <div className="event-content" style={{ padding: "5px", height: "100%" }}>
                     {event.title && (
                         <h3 style={{ 
                             margin: 0, 
                             fontSize: "14px",
                             fontWeight: "bold",
-                            whiteSpace: "nowrap",
+                            whiteSpace: "pre-wrap",
                             overflow: "hidden",
-                            textOverflow: "ellipsis"
+                            display: "-webkit-box",
+                            WebkitLineClamp: "2",
+                            WebkitBoxOrient: "vertical",
+                            lineHeight: "1.2"
                         }}>
                             {event.title}
                         </h3>
@@ -63,9 +78,12 @@ const Schedule: React.FC<ScheduleProps> = ({
                         <p style={{ 
                             margin: "2px 0",
                             fontSize: "12px",
-                            whiteSpace: "nowrap",
+                            whiteSpace: "pre-wrap",
                             overflow: "hidden",
-                            textOverflow: "ellipsis"
+                            display: "-webkit-box",
+                            WebkitLineClamp: "3",
+                            WebkitBoxOrient: "vertical",
+                            lineHeight: "1.2"
                         }}>
                             {event.body}
                         </p>
@@ -81,7 +99,6 @@ const Schedule: React.FC<ScheduleProps> = ({
             );
         }
 
-        // Fallback for events with no content
         return (
             <div className="event-content" style={{ padding: "5px" }}>
                 <div style={{ fontSize: "12px" }}>
@@ -113,7 +130,6 @@ const Schedule: React.FC<ScheduleProps> = ({
     };
 
     const groupedEvents = groupEventsByDay(sortEvents(events));
-    const formatHour = (hour: number): string => (hour < 10 ? "0" : "") + hour + ":00";
     const timeSlots = Array.from({ length: endHour - startHour }, (_, i) => formatHour(i + startHour));
 
     const timeToMinutes = (time: string): number => {
@@ -122,11 +138,21 @@ const Schedule: React.FC<ScheduleProps> = ({
     };
 
     const calculateEventPosition = (event: ScheduleEvent) => {
-        const totalMinutes = (endHour - startHour) * 60;
-        const startMinutes = timeToMinutes(event.start) - timeToMinutes(`${startHour}:00`);
-        const endMinutes = timeToMinutes(event.end) - timeToMinutes(`${startHour}:00`);
-        const top = (startMinutes / totalMinutes) * 100;
-        const height = ((endMinutes - startMinutes) / totalMinutes) * 100;
+        const minutesPerHour = 60;
+        const dayStartMinutes = startHour * minutesPerHour;
+        const totalHours = endHour - startHour;
+        
+        const eventStart = timeToMinutes(event.start) - dayStartMinutes;
+        const eventEnd = timeToMinutes(event.end) - dayStartMinutes;
+        
+        const pixelsPerMinute = contentHeight / (totalHours * minutesPerHour);
+        
+        const topPixels = eventStart * pixelsPerMinute;
+        const heightPixels = (eventEnd - eventStart) * pixelsPerMinute;
+        
+        const top = (topPixels / contentHeight) * 100;
+        const height = (heightPixels / contentHeight) * 100;
+        
         return { top, height };
     };
 
@@ -149,18 +175,11 @@ const Schedule: React.FC<ScheduleProps> = ({
         ))
     );
 
-    const borderSpacing = 10; // From CSS border-spacing
-    const totalSpacing = (headers.length + 1) * borderSpacing; // +1 for time column
-    const timeColumnWidth = 60; // From CSS .time-header width
+    const borderSpacing = 10;
+    const totalSpacing = (headers.length + 1) * borderSpacing;
+    const timeColumnWidth = 80; // Increased from 60 to accommodate AM/PM format
     const availableWidth = width - totalSpacing;
     const dayColumnWidth = (availableWidth - timeColumnWidth) / headers.length;
-
-    useEffect(() => {
-        setEvents(initialEvents);
-        const { startHour: newStartHour, endHour: newEndHour } = findStartEndTimes(initialEvents);
-        setStartHour(newStartHour);
-        setEndHour(newEndHour);
-    }, [initialEvents]);
     
     const contentHeight = height - 50;
     const hourHeight = contentHeight / (endHour - startHour);
@@ -170,7 +189,7 @@ const Schedule: React.FC<ScheduleProps> = ({
             width: `${width}px`, 
             height: `${height}px`,
             margin: "0 auto",
-            position: "relative" // Add this to ensure proper stacking context
+            position: "relative"
         }}>
             <div className="schedule-container" style={{ height: "100%" }}>
                 <table className="schedule-table" style={{ 
@@ -300,7 +319,8 @@ const Schedule: React.FC<ScheduleProps> = ({
                     event={selectedEvent} 
                     onClose={() => setSelectedEvent(null)} 
                 />
-)}        </div>
+            )}
+        </div>
     );
 };
 

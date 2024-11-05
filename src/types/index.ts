@@ -1,3 +1,4 @@
+// types/index.ts
 export interface ScheduleEvent {
     id: string;
     days: number[];
@@ -5,17 +6,25 @@ export interface ScheduleEvent {
     end: string;
     color?: string;
     customContent?: string;
-    title?: string;    // New optional title field
-    body?: string;     // New optional body field
+    title?: string;
+    body?: string;
     [key: string]: any;
 }
 
 export interface ScheduleProps {
     events: ScheduleEvent[];
-    width?: number;        // New: Optional width in pixels
-    height?: number;       // New: Optional height in pixels
+    width?: number;
+    height?: number;
     onEventClick?: (event: ScheduleEvent) => void;
     onAddEvent?: (event: ScheduleEvent) => void;
     onRemoveEvent?: (eventId: string) => void;
     headers?: { label: string; dayIndex: number }[];
+    customPopupHandler?: (event: ScheduleEvent) => void;  // New prop for custom popup handling
+    useDefaultPopup?: boolean;  // New prop to control default popup behavior
+}
+
+
+export interface EventPopupProps {
+    event: ScheduleEvent;
+    onClose: () => void;
 }
