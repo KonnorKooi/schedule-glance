@@ -147,39 +147,32 @@ const Demo = () => {
     };
 
     const renderSchedule = () => {
+        const commonProps = {
+            events,
+            headers: [
+                { label: "Mon", dayIndex: 0 },
+                { label: "Tue", dayIndex: 1 },
+                { label: "Wed", dayIndex: 2 },
+                { label: "Thu", dayIndex: 3 },
+                { label: "Fri", dayIndex: 4 },
+            ]
+        };
+
         switch (activeTab) {
             case 'default':
                 return (
                     <Schedule
-                        events={events}
-                        width={1000}
-                        height={800}
+                        {...commonProps}
                         onAddEvent={handleAddEvent}
                         onRemoveEvent={handleRemoveEvent}
-                        headers={[
-                            { label: "Mon", dayIndex: 0 },
-                            { label: "Tue", dayIndex: 1 },
-                            { label: "Wed", dayIndex: 2 },
-                            { label: "Thu", dayIndex: 3 },
-                            { label: "Fri", dayIndex: 4 },
-                        ]}
                     />
                 );
             case 'custom':
                 return (
                     <>
                         <Schedule
-                            events={events}
-                            width={1000}
-                            height={800}
+                            {...commonProps}
                             customPopupHandler={showCustomPopup}
-                            headers={[
-                                { label: "Mon", dayIndex: 0 },
-                                { label: "Tue", dayIndex: 1 },
-                                { label: "Wed", dayIndex: 2 },
-                                { label: "Thu", dayIndex: 3 },
-                                { label: "Fri", dayIndex: 4 },
-                            ]}
                         />
                         {customPopupEvent && (
                             <CustomPopup 
@@ -192,36 +185,18 @@ const Demo = () => {
             case 'none':
                 return (
                     <Schedule
-                        events={events}
-                        width={1000}
-                        height={800}
+                        {...commonProps}
                         useDefaultPopup={false}
-                        headers={[
-                            { label: "Mon", dayIndex: 0 },
-                            { label: "Tue", dayIndex: 1 },
-                            { label: "Wed", dayIndex: 2 },
-                            { label: "Thu", dayIndex: 3 },
-                            { label: "Fri", dayIndex: 4 },
-                        ]}
                     />
                 );
             case 'callback':
                 return (
                     <Schedule
-                        events={events}
-                        width={1000}
-                        height={800}
+                        {...commonProps}
                         useDefaultPopup={false}
                         onEventClick={(event) => {
                             alert(`Clicked event: ${event.title || 'Untitled'}\nTime: ${event.start} - ${event.end}`);
                         }}
-                        headers={[
-                            { label: "Mon", dayIndex: 0 },
-                            { label: "Tue", dayIndex: 1 },
-                            { label: "Wed", dayIndex: 2 },
-                            { label: "Thu", dayIndex: 3 },
-                            { label: "Fri", dayIndex: 4 },
-                        ]}
                     />
                 );
             default:
@@ -230,54 +205,73 @@ const Demo = () => {
     };
 
     return (
-        <div>
+        <div className="page-container" style={{
+            minHeight: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '1rem',
+            gap: '1rem'
+        }}>
             <h1>Schedule Demo</h1>
-            <div className="schedule-selector">
-                {schedules.map((schedule) => (
+            
+            <div className="controls-container">
+                <div className="schedule-selector">
+                    {schedules.map((schedule) => (
+                        <button
+                            key={schedule.id}
+                            onClick={() => handleSwitchSchedule(schedule.id)}
+                            className={activeScheduleId === schedule.id ? "active" : ""}
+                        >
+                            {schedule.name}
+                        </button>
+                    ))}
+                </div>
+                <div className="popup-selector">
                     <button
-                        key={schedule.id}
-                        onClick={() => handleSwitchSchedule(schedule.id)}
-                        className={activeScheduleId === schedule.id ? "active" : ""}
+                        onClick={() => setActiveTab('default')}
+                        className={activeTab === 'default' ? 'active' : ''}
                     >
-                        {schedule.name}
+                        Default Popup
                     </button>
-                ))}
+                    <button
+                        onClick={() => setActiveTab('custom')}
+                        className={activeTab === 'custom' ? 'active' : ''}
+                    >
+                        Custom Popup
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('none')}
+                        className={activeTab === 'none' ? 'active' : ''}
+                    >
+                        No Popup
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('callback')}
+                        className={activeTab === 'callback' ? 'active' : ''}
+                    >
+                        Click Callback
+                    </button>
+                </div>
             </div>
-            <div className="popup-selector" style={{ marginBottom: '20px', textAlign: 'center' }}>
-                <button
-                    onClick={() => setActiveTab('default')}
-                    className={activeTab === 'default' ? 'active' : ''}
-                    style={{ margin: '0 10px' }}
-                >
-                    Default Popup
-                </button>
-                <button
-                    onClick={() => setActiveTab('custom')}
-                    className={activeTab === 'custom' ? 'active' : ''}
-                    style={{ margin: '0 10px' }}
-                >
-                    Custom Popup
-                </button>
-                <button
-                    onClick={() => setActiveTab('none')}
-                    className={activeTab === 'none' ? 'active' : ''}
-                    style={{ margin: '0 10px' }}
-                >
-                    No Popup
-                </button>
-                <button
-                    onClick={() => setActiveTab('callback')}
-                    className={activeTab === 'callback' ? 'active' : ''}
-                    style={{ margin: '0 10px' }}
-                >
-                    Click Callback
-                </button>
+
+            <div className="schedule-container" style={{
+                flex: 1,
+                display: 'flex',
+                position: 'relative',
+                maxWidth: '1200px',
+                width: '100%',
+                margin: '0 auto',
+                backgroundColor: '#ffffff',
+                borderRadius: '20px',
+                padding: '1rem',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                minHeight: '600px'
+            }}>
+                {renderSchedule()}
             </div>
-            {renderSchedule()}
         </div>
     );
 };
-
 const container = document.getElementById("root");
 const root = createRoot(container);
 root.render(<Demo />);
