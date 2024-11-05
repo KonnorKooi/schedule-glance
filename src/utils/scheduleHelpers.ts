@@ -25,31 +25,39 @@ export const minutesToTime = (minutes: number): string => {
 
 // Helper function to find the earliest start time and latest end time of the schedule
 export const findStartEndTimes = (events: ScheduleEvent[]): { startHour: number, endHour: number } => {
+  if (!events.length) {
+      return { startHour: 8, endHour: 18 }; // Default business hours if no events
+  }
+
   let earliestStart = 24 * 60; // Initialize to end of day
   let latestEnd = 0;
 
   events.forEach(event => {
-    const startMinutes = timeToMinutes(event.start);
-    const endMinutes = timeToMinutes(event.end);
+      const startMinutes = timeToMinutes(event.start);
+      const endMinutes = timeToMinutes(event.end);
 
-    if (startMinutes < earliestStart) {
-      earliestStart = startMinutes;
-    }
+      if (startMinutes < earliestStart) {
+          earliestStart = startMinutes;
+      }
 
-    if (endMinutes > latestEnd) {
-      latestEnd = endMinutes;
-    }
+      if (endMinutes > latestEnd) {
+          latestEnd = endMinutes;
+      }
   });
 
   // Round down to the nearest hour for start time
-  const startHour = Math.floor(earliestStart / 60);
+  const startHour = Math.max(0, Math.floor(earliestStart / 60));
   
-  // Round to the exact hour for end time (no extra buffer hour)
-  // If the end time is exactly on the hour (e.g., 14:00), use that hour
-  // If it's not (e.g., 14:30), round up to the next hour
+  // Round up to the next hour for end time and add 1 hour padding
   const endHour = Math.min(24, Math.ceil(latestEnd / 60));
+
+  // Ensure there's always at least 3 hours shown
+  if (endHour - startHour < 3) {
+      return {
+          startHour: Math.max(0, startHour - 1),
+          endHour: Math.min(24, endHour + 1)
+      };
+  }
 
   return { startHour, endHour };
 };
-
-// TODO: Add more helper functions as needed for schedule operations
