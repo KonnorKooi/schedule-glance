@@ -40,70 +40,68 @@ const events = [
 
 function App() {
   return (
-    <Schedule 
-      events={events}
-      width={800}
-      height={600}
-      onEventClick={(event) => console.log('Event clicked:', event)}
-    />
+    // Container must have position: relative and a defined height
+    <div style={{ 
+      position: 'relative',
+      height: '600px'  // Or any other height strategy
+    }}>
+      
+    
   );
 }
 ```
 
+## Container Requirements
+
+The Schedule component is designed to fill its container. To work properly, the container must have:
+
+1. `position: relative`
+2. A defined height
+
+### Common Container Patterns
+
+1. **Fixed Height:**
+```jsx
+
+  
+
+```
+
+2. **Flexbox Container (Recommended):**
+```jsx
+
+  Header Content
+  
+    
+  
+  Footer Content
+
+```
+
+3. **Grid Container:**
+```jsx
+
+  Header Content
+  
+    
+  
+  Footer Content
+
+```
+
 ## Event Configuration
 
-Events can be configured in three ways:
-
-### 1. Basic Event
-```jsx
-const basicEvent = {
-  id: "1",
-  days: [1, 3], // Tuesday, Thursday
-  start: "09:00",
-  end: "10:00",
-  color: "#99ff99"
-};
-```
-
-### 2. Event with Title and Body
-```jsx
-const eventWithContent = {
-  id: "2",
-  days: [0, 2, 4],
-  start: "14:00",
-  end: "15:00",
-  color: "#99ccff",
-  title: "Team Meeting",
-  body: "Project Review"
-};
-```
-
-### 3. Event with Custom HTML Content
-```jsx
-const customEvent = {
-  id: "3",
-  days: [1],
-  start: "11:00",
-  end: "12:00",
-  color: "#ff99ff",
-  customContent: `
-    <div style="padding: 5px;">
-      <h3 style="margin: 0; font-size: 14px;">Custom Event</h3>
-      <p style="margin: 2px 0; font-size: 12px;">With HTML content</p>
-    </div>
-  `
-};
-```
+[Rest of the existing event configuration documentation...]
 
 ## Props
 
 | Prop | Type | Required | Default | Description |
 |------|------|----------|---------|-------------|
 | events | ScheduleEvent[] | Yes | - | Array of events to display |
-| width | number | No | 800 | Width of the schedule in pixels |
-| height | number | No | 600 | Height of the schedule in pixels |
 | onEventClick | (event: ScheduleEvent) => void | No | - | Callback when an event is clicked |
 | headers | { label: string; dayIndex: number }[] | No | Mon-Fri | Custom headers for days |
+| customPopupHandler | (event: ScheduleEvent) => void | No | - | Custom popup handler |
+| useDefaultPopup | boolean | No | true | Whether to use the default popup |
 
 ## Types
 
@@ -122,10 +120,10 @@ interface ScheduleEvent {
 
 interface ScheduleProps {
   events: ScheduleEvent[];
-  width?: number;
-  height?: number;
   onEventClick?: (event: ScheduleEvent) => void;
   headers?: { label: string; dayIndex: number }[];
+  customPopupHandler?: (event: ScheduleEvent) => void;
+  useDefaultPopup?: boolean;
 }
 ```
 
@@ -254,7 +252,6 @@ If you have any questions or run into issues, please open an issue on the [GitHu
         (thin lines representing the hour marks, behind the events).
 -   [x] Change the start and end time of the schedule to act modulary based upon
         added events (based on earliest event and latest event).
--   [ ] Allow the developer using the schedule module to import an array of events.
--   [ ] Add a "Clear Schedule" option to easily cycle through schedules.
--   [ ] Make nicer looking poppups. I know this is using the custom components
-        right now, maye add if there is to much info add elipses (...) for the calendar event
+-   [x] Allow the developer using the schedule module to import an array of events.
+-   [x] Make nicer looking poppups.Use custom components that the user can do 
+        t
