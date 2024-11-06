@@ -26,7 +26,7 @@ export const minutesToTime = (minutes: number): string => {
 // Helper function to find the earliest start time and latest end time of the schedule
 export const findStartEndTimes = (events: ScheduleEvent[]): { startHour: number, endHour: number } => {
   if (!events.length) {
-      return { startHour: 8, endHour: 18 }; // Default business hours if no events
+      return { startHour: 8, endHour: 14 }; // Default business hours if no events
   }
 
   let earliestStart = 24 * 60; // Initialize to end of day
