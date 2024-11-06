@@ -1,4 +1,3 @@
-// types/index.ts
 export interface ScheduleEvent {
     id: string;
     days: number[];
@@ -19,11 +18,14 @@ export interface ScheduleProps {
     onAddEvent?: (event: ScheduleEvent) => void;
     onRemoveEvent?: (eventId: string) => void;
     headers?: { label: string; dayIndex: number }[];
-    customPopupHandler?: (event: ScheduleEvent) => void;  // New prop for custom popup handling
-    useDefaultPopup?: boolean;  // New prop to control default popup behavior
-    emptyStateMessage?: string;  // New prop for custom empty state message
+    customPopupHandler?: (event: ScheduleEvent) => void;
+    useDefaultPopup?: boolean;
+    emptyStateMessage?: string;
 }
 
+export interface ScheduleRef {
+    exportToPng: (filename?: string) => Promise<void>;
+}
 
 export interface EventPopupProps {
     event: ScheduleEvent;

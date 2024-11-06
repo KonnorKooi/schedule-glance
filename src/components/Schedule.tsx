@@ -1,9 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import { ScheduleProps, ScheduleEvent } from "../types";
 import { sortEvents, findStartEndTimes } from "../utils/scheduleHelpers";
 import EventPopup from './EventPopup';
+import html2canvas from 'html2canvas';
 
-const Schedule: React.FC<ScheduleProps> = ({
+// Define the exposed methods in an interface
+export interface ScheduleRef {
+    exportToPng: (filename?: string) => Promise<void>;
+}
+
+const Schedule = forwardRef<ScheduleRef, ScheduleProps>(({
     events: initialEvents,
     onEventClick,
     headers = [
@@ -16,12 +22,13 @@ const Schedule: React.FC<ScheduleProps> = ({
     customPopupHandler,
     useDefaultPopup = true,
     emptyStateMessage = "No events scheduled"
-}) => {
+}, ref) => {
     const [events, setEvents] = useState<ScheduleEvent[]>(initialEvents);
     const [selectedEvent, setSelectedEvent] = useState<ScheduleEvent | null>(null);
     const [startHour, setStartHour] = useState(8);
     const [endHour, setEndHour] = useState(18);
     const scheduleRef = useRef<HTMLDivElement>(null);
+    const [isExporting, setIsExporting] = useState(false);
 
     useEffect(() => {
         setEvents(initialEvents);
@@ -30,6 +37,53 @@ const Schedule: React.FC<ScheduleProps> = ({
         setStartHour(Math.max(0, newStartHour)); // could Add 1 hour padding at start -1
         setEndHour(Math.min(24, newEndHour)); // could Add 1 hour padding at end +1
     }, [initialEvents]);
+
+    // Expose the export function via ref
+    useImperativeHandle(ref, () => ({
+        exportToPng: async (filename: string = 'schedule-export.png') => {
+            if (!scheduleRef.current) {
+                console.error('Schedule ref is null');
+                return;
+            }
+            
+            setIsExporting(true);
+            try {
+                console.log('Starting export...');
+                
+                const canvas = await html2canvas(scheduleRef.current, {
+                    backgroundColor: '#ffffff',
+                    scale: 2,
+                    logging: true,
+                    useCORS: true,
+                    allowTaint: true
+                });
+                
+                console.log('Canvas generated, creating download...');
+                
+                canvas.toBlob((blob) => {
+                    if (blob) {
+                        const url = window.URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = filename;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        window.URL.revokeObjectURL(url);
+                        console.log('Download initiated');
+                    } else {
+                        console.error('Failed to create blob');
+                    }
+                }, 'image/png', 1.0);
+                
+            } catch (error) {
+                console.error('Failed to export PNG:', error);
+                throw error; // Re-throw to allow error handling by the consumer
+            } finally {
+                setIsExporting(false);
+            }
+        }
+    }));
 
     const handleEventClick = (event: ScheduleEvent) => {
         if (customPopupHandler) {
@@ -325,6 +379,6 @@ const Schedule: React.FC<ScheduleProps> = ({
             )}
         </div>
     );
-};
+});  // Close the forwardRef callback
 
 export default Schedule;

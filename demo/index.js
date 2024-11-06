@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { createRoot } from "react-dom/client";
-import { Schedule } from "../src/index";
+import { Schedule, ScheduleRef } from "../src/index";
 
 const schedules = [
     {
@@ -130,7 +130,8 @@ const Demo = () => {
     const [events, setEvents] = useState(schedules[0].events);
     const [activeTab, setActiveTab] = useState('default');
     const [customPopupEvent, setCustomPopupEvent] = useState(null);
-
+    const scheduleRef = useRef(null);
+    
     const handleSwitchSchedule = (scheduleId) => {
         setActiveScheduleId(scheduleId);
         const newSchedule = schedules.find(
@@ -152,9 +153,18 @@ const Demo = () => {
     const showCustomPopup = (event) => {
         setCustomPopupEvent(event);
     };
+    const handleExport = async () => {
+        try {
+            await scheduleRef.current?.exportToPng(`${activeScheduleId}-schedule.png`);
+        } catch (error) {
+            console.error('Failed to export schedule:', error);
+            alert('Failed to export schedule. Please try again.');
+        }
+    };
 
     const renderSchedule = () => {
         const commonProps = {
+            ref: scheduleRef,  // Add the ref here
             events,
             headers: [
                 { label: "Mon", dayIndex: 0 },
@@ -233,6 +243,16 @@ const Demo = () => {
                             {schedule.name}
                         </button>
                     ))}
+                    <button
+                        onClick={handleExport}
+                        style={{
+                            backgroundColor: '#4CAF50',  // Green color
+                            color: 'white',
+                            marginLeft: '1rem'
+                        }}
+                    >
+                        Export PNG
+                    </button>
                 </div>
                 <div className="popup-selector">
                     <button
@@ -280,6 +300,7 @@ const Demo = () => {
         </div>
     );
 };
+
 const container = document.getElementById("root");
 const root = createRoot(container);
 root.render(<Demo />);

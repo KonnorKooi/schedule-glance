@@ -4,52 +4,20 @@ A lightweight, customizable weekly schedule component for React applications. Sc
 
 ![Schedule Glance Demo](./image.png)
 
-## Features
+Features
 
-- 📅 Weekly schedule view
-- 🎨 Customizable event colors and styles
-- 📱 Responsive design
-- ⚡ Lightweight and performant
-- 🔧 Highly configurable
-- 💅 Custom event styling options
-- 🎯 TypeScript support
+📅 Weekly schedule view
+🎨 Customizable event colors and styles
+📱 Responsive design
+⚡ Lightweight and performant
+🔧 Highly configurable
+💅 Custom event styling options
+🎯 TypeScript support
+📤 Export to PNG functionality
+🎈 Customizable empty state message
 
-## Installation
-
-```bash
-npm install @konnorkooi/schedule-glance
-```
-
-## Quick Start
-
-```jsx
-import { Schedule } from '@konnorkooi/schedule-glance';
-import '@konnorkooi/schedule-glance/dist/index.css';
-
-const events = [
-  {
-    id: "1",
-    days: [0, 2, 4], // Monday, Wednesday, Friday
-    start: "10:00",
-    end: "11:00",
-    color: "#ff9999",
-    title: "Team Meeting",
-    body: "Weekly Sync"
-  }
-];
-
-function App() {
-  return (
-    // Container must have position: relative and a defined height
-    <div style={{ 
-      position: 'relative',
-      height: '600px'  // Or any other height strategy
-    }}>
-      
-    
-  );
-}
-```
+Installation
+bash
 
 ## Container Requirements
 
