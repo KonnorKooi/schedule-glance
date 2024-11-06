@@ -77,6 +77,13 @@ const schedules = [
             },
         ],
     },
+    {
+        id: "Meal",
+        name: "Meal Schedule",
+        events: [
+            
+        ],
+    },
 ];
 
 // Custom popup component
@@ -165,6 +172,7 @@ const Demo = () => {
                         {...commonProps}
                         onAddEvent={handleAddEvent}
                         onRemoveEvent={handleRemoveEvent}
+                        emptyStateMessage="No events scheduled for today"
                     />
                 );
             case 'custom':

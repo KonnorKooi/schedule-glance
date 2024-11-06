@@ -21,6 +21,7 @@ export interface ScheduleProps {
     headers?: { label: string; dayIndex: number }[];
     customPopupHandler?: (event: ScheduleEvent) => void;  // New prop for custom popup handling
     useDefaultPopup?: boolean;  // New prop to control default popup behavior
+    emptyStateMessage?: string;  // New prop for custom empty state message
 }
 
 
