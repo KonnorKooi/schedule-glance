@@ -4,20 +4,23 @@ A lightweight, customizable weekly schedule component for React applications. Sc
 
 ![Schedule Glance Demo](./image.png)
 
-Features
+## Features
 
-📅 Weekly schedule view
-🎨 Customizable event colors and styles
-📱 Responsive design
-⚡ Lightweight and performant
-🔧 Highly configurable
-💅 Custom event styling options
-🎯 TypeScript support
-📤 Export to PNG functionality
-🎈 Customizable empty state message
+- 📅 Weekly schedule view
+- 🎨 Customizable event colors and styles
+- 📱 Responsive design
+- ⚡ Lightweight and performant
+- 🔧 Highly configurable
+- 💅 Custom event styling options
+- 🎯 TypeScript support
+- 📤 Export to PNG functionality
+- 🎈 Customizable empty state message
 
-Installation
-bash
+## Installation
+
+```bash
+npm install schedule-glance
+```
 
 ## Container Requirements
 
@@ -30,36 +33,32 @@ The Schedule component is designed to fill its container. To work properly, the 
 
 1. **Fixed Height:**
 ```jsx
-
-  
-
+<div style={{ position: 'relative', height: '600px' }}>
+  <Schedule events={events} />
+</div>
 ```
 
 2. **Flexbox Container (Recommended):**
 ```jsx
-
-  Header Content
-  
-    
-  
-  Footer Content
-
+<div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+  <header>Header Content</header>
+  <main style={{ position: 'relative', flex: 1 }}>
+    <Schedule events={events} />
+  </main>
+  <footer>Footer Content</footer>
+</div>
 ```
 
 3. **Grid Container:**
 ```jsx
-
-  Header Content
-  
-    
-  
-  Footer Content
-
+<div style={{ display: 'grid', gridTemplateRows: 'auto 1fr auto', height: '100vh' }}>
+  <header>Header Content</header>
+  <main style={{ position: 'relative' }}>
+    <Schedule events={events} />
+  </main>
+  <footer>Footer Content</footer>
+</div>
 ```
-
-## Event Configuration
-
-[Rest of the existing event configuration documentation...]
 
 ## Props
 
@@ -70,6 +69,7 @@ The Schedule component is designed to fill its container. To work properly, the 
 | headers | { label: string; dayIndex: number }[] | No | Mon-Fri | Custom headers for days |
 | customPopupHandler | (event: ScheduleEvent) => void | No | - | Custom popup handler |
 | useDefaultPopup | boolean | No | true | Whether to use the default popup |
+| emptyStateMessage | string | No | "No events scheduled" | Message shown when no events are present |
 
 ## Types
 
@@ -92,7 +92,38 @@ interface ScheduleProps {
   headers?: { label: string; dayIndex: number }[];
   customPopupHandler?: (event: ScheduleEvent) => void;
   useDefaultPopup?: boolean;
+  emptyStateMessage?: string;
 }
+
+interface ScheduleRef {
+  exportToPng: (filename?: string) => Promise<void>;
+}
+```
+
+## Basic Usage
+
+```jsx
+import { Schedule } from 'schedule-glance';
+
+const MySchedule = () => {
+  const events = [
+    {
+      id: "1",
+      days: [1, 3], // Tuesday and Thursday
+      start: "09:00",
+      end: "10:00",
+      color: "#99ff99",
+      title: "Morning Meeting",
+      body: "Daily Standup"
+    }
+  ];
+
+  return (
+    <div style={{ position: 'relative', height: '600px' }}>
+      <Schedule events={events} />
+    </div>
+  );
+};
 ```
 
 ## Custom Headers
@@ -132,9 +163,10 @@ The component comes with default styles, but you can override them using CSS cla
 }
 ```
 
-## Examples
+## Advanced Examples
 
-### Multiple Events
+### Multiple Events with Custom Content
+
 ```jsx
 const events = [
   {
@@ -143,8 +175,12 @@ const events = [
     start: "09:00",
     end: "10:00",
     color: "#99ff99",
-    title: "Morning Meeting",
-    body: "Daily Standup"
+    customContent: `
+      <div style="padding: 5px;">
+        <h3 style="margin: 0; font-size: 14px;">Team Meeting</h3>
+        <p style="margin: 2px 0; font-size: 12px;">Project Review</p>
+      </div>
+    `
   },
   {
     id: "2",
@@ -160,7 +196,8 @@ const events = [
 <Schedule events={events} />
 ```
 
-### Event Click Handler
+### Custom Event Handling
+
 ```jsx
 const handleEventClick = (event) => {
   console.log('Event clicked:', event);
@@ -170,7 +207,36 @@ const handleEventClick = (event) => {
 <Schedule 
   events={events}
   onEventClick={handleEventClick}
+  useDefaultPopup={false} // Disable default popup if using custom handler
 />
+```
+
+### Export to PNG
+
+```jsx
+import { useRef } from 'react';
+import { Schedule, ScheduleRef } from 'schedule-glance';
+
+const MySchedule = () => {
+  const scheduleRef = useRef<ScheduleRef>(null);
+
+  const handleExport = async () => {
+    try {
+      await scheduleRef.current?.exportToPng('my-schedule.png');
+    } catch (error) {
+      console.error('Failed to export:', error);
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={handleExport}>Export Schedule</button>
+      <div style={{ position: 'relative', height: '600px' }}>
+        <Schedule ref={scheduleRef} events={events} />
+      </div>
+    </div>
+  );
+};
 ```
 
 ## Contributing
@@ -185,7 +251,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License 
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
 
 ## Author
 
@@ -194,32 +260,3 @@ Konnor Kooi
 ## Support
 
 If you have any questions or run into issues, please open an issue on the [GitHub repository](https://github.com/cwooper/schedule-glance/issues).
-
-## TODO
-
--   [x] Create Schedule Object
-    -   [x] Add Times Column
-    -   [x] Add Descending times (08:00 - 17:00)
-    -   [x] Add Header Row with days
--   [x] Create Events Object
-    -   [x] Rendered with Days and Times
-    -   [x] Ability to customize the color
--   [x] Render Events in the Schedule
--   [x] Add Event Pop-ups upon click
--   [x] Allow for modular event sizing (height)
--   [x] Make Schedule Events more modular.
-    -   [x] Remove All internal "decorative elements" (to be replaced with HTML),
-            while keeping "Days" and "Times."
-    -   [x] Add integrated HTML elements for extended customizability.
-    -   [x] Show demo with the same Subject/Title/etc. but with HTML.
--   [x] Make Schedule Headers more modular.
-    -   [x] Allow user to input different headers when creating the schedule.
-    -   [x] Rework "Days" to be assigned to a numbered column (0 for day 0/Mon)
--   [ ] Change columns to be uniform width based on percentage of total width.
--   [x] Add time lines to the rows
-        (thin lines representing the hour marks, behind the events).
--   [x] Change the start and end time of the schedule to act modulary based upon
-        added events (based on earliest event and latest event).
--   [x] Allow the developer using the schedule module to import an array of events.
--   [x] Make nicer looking poppups.Use custom components that the user can do 
-        t
